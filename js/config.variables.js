@@ -15,6 +15,8 @@ let frameDelayMult = 0;
 
 let spawnRate = 0.075;
 let numParticles = 100;
+let particleHardcap = 150;
+let particleRisk = 100;
 let autoAdjustParticleAmount = true;
-let targetFrames = 50;
+let targetFrames = 57;
 ///////////////////
