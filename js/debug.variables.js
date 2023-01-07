@@ -11,8 +11,9 @@ let debug = {
         centerX: canvasDims.w / 2,
         centerY: canvasDims.h / 2,
         radius: 2
-    }
+    },
 };
+
 if (debug.centerSpawn) {
     spawnArea = debug.centerSpawnArea;
 }

@@ -1,0 +1,13 @@
+body {
+  margin: 0;
+}
+
+#leafSim {
+  position: relative;
+}
+.debugData {
+  position: absolute;
+}
+.debug-value {
+  display: flex;
+}

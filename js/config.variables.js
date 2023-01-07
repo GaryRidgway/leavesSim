@@ -10,6 +10,11 @@ let spawnArea = {
     centerY: 100,
     radius: 150
 };
-let frameDelayMult = 1;
-let numParticles = 40;
+let frameDelayMult = 0;
+
+
+let spawnRate = 0.075;
+let numParticles = 100;
+let autoAdjustParticleAmount = true;
+let targetFrames = 50;
 ///////////////////

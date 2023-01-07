@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
         <title>HTML 5 Boilerplate</title>
-        <!-- <link rel="stylesheet" href="style.css"> -->
+        <link rel="stylesheet" href="css/style.css">
     </head>
     <body>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.5.0/p5.min.js" integrity="sha512-WJXVjqeINVpi5XXJ2jn0BSCfp0y80IKrYh731gLRnkAS9TKc5KNt/OfLtu+fCueqdWniouJ1ubM+VI/hbo7POQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
@@ -14,6 +14,24 @@
         <script src="js/particle.js"></script>
         <script src="js/leavesHelpers.js"></script>
         <script src="js/leaves.js"></script>
+        <div id="leafSim">
+            <div id="leafCanvasContainer"></div>
+            <div class="debugData">
+                <div class="debug-value fps">
+                    <div class="prefix">FPS :&nbsp;</div>
+                    <div class="value"></div>
+                </div>
+                <div class="debug-value particles">
+                    <div class="prefix">Particles :&nbsp;</div>
+                    <div class="value"></div>
+                </div>
+                <div class="debug-value spawnRate">
+                    <div class="prefix">Spawn rate :&nbsp;</div>
+                    <div class="value"></div>
+                    <div class="suffix">/s</div>
+                </div>
+            </div>
+        </div>
     </body>
 </html>
 

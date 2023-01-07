@@ -2,18 +2,36 @@ var s1 = function (sketch) {
     sketch.particles = [];
     sketch.bounceArcs = {};
     sketch.fadePowerFrames = 40;
+    sketch.timeSinceLastSpawn = 0;
     sketch.numParticles = numParticles;
+    sketch.spawnRate = spawnRate;
+    sketch.fpsData = {
+        fpsValElement: null,
+        adjustedNumParticles: null,
+        adjustmentCoefficient: null,
+        past60Frames: [],
+        updateTracker: 10000,
+        updateInterval: 0.5,
+        averageFPS: 60
+    };
 
     sketch.wind = {
-    x: -5,
-    y: 0
+        x: -5,
+        y: 0
     };
 
     sketch.setup = function () {
-    sketch.canvas1 = sketch.createCanvas(canvasDims.w, canvasDims.h);
-    sketch.canvas1.position(0, 0);
+        sketch.leafCanvas = sketch.createCanvas(canvasDims.w, canvasDims.h);
+        sketch.leafCanvas.position(0, 0);
+        sketch.leafCanvas.id('leafCanvas');
+        sketch.leafCanvas.parent('leafCanvasContainer');
+        sketch.fpsData.fpsValElement = document.querySelector('#leafSim .fps .value');
+        sketch.fpsData.adjustedNumParticles = document.querySelector('#leafSim .particles .value');
+        sketch.fpsData.spawnRate = document.querySelector('#leafSim .spawnRate .value');
     };
+
     sketch.draw = function () {
+        sketch.replaceFPS();
         sketch.background(175);
         sketch.particleLoop();
         sketch.trackMouse();
@@ -173,7 +191,7 @@ var s1 = function (sketch) {
             -sketch.PI / 9,
             sketch.PI / 9
             );
-        
+
             let speedFade = Math.max(((Math.pow(arc.fadePower, 2)/(sketch.fadePowerFrames/2)) - arc.fadePower), 0);
             sketch.stroke(
             'rgba(255, 255, 255,'
@@ -197,8 +215,13 @@ var s1 = function (sketch) {
     };
 
     sketch.particleLoop = function () {
-        if (sketch.particles.length < sketch.numParticles) {
-            sketch.particles.push(new particle(sketch, true));
+        // Particle spawn.
+        sketch.timeSinceLastSpawn += sketch.deltaTime;
+        if (sketch.timeSinceLastSpawn/1000 >= sketch.spawnRate) {
+            if (sketch.particles.length < sketch.numParticles) {
+                sketch.particles.push(new particle(sketch, true));
+            }
+            sketch.timeSinceLastSpawn = 0;
         }
         for (let i = sketch.particles.length - 1; i >= 0; i--) {
             if (sketch.particles[i].deletable()) {
@@ -211,6 +234,51 @@ var s1 = function (sketch) {
             }
         }
     };
+
+    sketch.replaceFPS = function() {
+        if (sketch.frameCount === 0){
+            return
+        }
+
+        let secondsPassed = sketch.deltaTime/1000;
+        let CFPS = 1 / secondsPassed;
+        sketch.fpsData.updateTracker += secondsPassed;
+
+        // Update the past60Frames.
+        let numlast60Frames = sketch.fpsData.past60Frames.length;
+        if (numlast60Frames >= 60) {
+            sketch.fpsData.past60Frames.splice(0,1);
+        }
+        sketch.fpsData.past60Frames.push(CFPS);
+
+        // Update the tracker.
+        if (sketch.fpsData.updateTracker >= sketch.fpsData.updateInterval) {
+            let last60FrameSum = 0;
+            let newNumLast60Frames = sketch.fpsData.past60Frames.length;
+            for (let i = 0; i < newNumLast60Frames; i++) {
+                last60FrameSum += sketch.fpsData.past60Frames[i];
+            }
+            if (last60FrameSum / newNumLast60Frames !== Infinity) {
+
+                // Auto adjust particles?
+                if (autoAdjustParticleAmount) {
+                    let adjustmentCoefficient = sketch.fpsData.averageFPS / targetFrames;
+                    sketch.numParticles = Math.min(Math.max(numParticles * adjustmentCoefficient, 0), 4*numParticles);
+                    sketch.spawnRate = spawnRate / adjustmentCoefficient;
+                }
+
+                sketch.fpsData.averageFPS = Math.floor(last60FrameSum / newNumLast60Frames);
+                if (sketch.fpsData.averageFPS !== Infinity) {
+                    sketch.fpsData.fpsValElement.innerText = sketch.fpsData.averageFPS;
+                    sketch.fpsData.adjustedNumParticles.innerText = rRound(sketch.numParticles, 2);
+                    sketch.fpsData.spawnRate.innerText = rRound(1/sketch.spawnRate, 2);
+                }
+
+                // Reset it to 0 so we dont do this all the time.
+                sketch.fpsData.updateTracker = 0;
+            }
+        }
+    }
 };
 
 // create a new instance of p5 and pass in the function for sketch 1
