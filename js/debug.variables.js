@@ -7,7 +7,7 @@ let debug = {
     stopForces : false,
     stopTurbulence: false,
     bounceArcs: true,
-    mouseTracking: false,
+    mouseTracking: true,
     drawSpawnArea: true,
     centerSpawn: false,
     centerSpawnArea: {
