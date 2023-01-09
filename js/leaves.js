@@ -267,10 +267,10 @@ var s1 = function (sketch) {
                         Math.min(Math.max(sketch.numParticles * adjustmentCoefficient, 0), particleRisk * numParticles)
                         + sketch.numParticles
                     ) / 2, particleHardcap);
-                    sketch.spawnRate = (
+                    sketch.spawnRate = Math.max((
                         Math.max(Math.min(sketch.spawnRate / adjustmentCoefficient, 1), spawnRate / particleRisk) * 2
                         + sketch.spawnRate
-                    ) / 3;
+                    ) / 2.8, spawnRateHardcap);
                 }
 
                 sketch.fpsData.averageFPS = Math.floor(last60FrameSum / newNumLast60Frames);

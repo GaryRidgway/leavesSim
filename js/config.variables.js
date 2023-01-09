@@ -13,10 +13,12 @@ let spawnArea = {
 let frameDelayMult = 0;
 
 
-let spawnRate = 0.075;
-let numParticles = 100;
-let particleHardcap = 150;
 let particleRisk = 100;
+let limitModifier = 2;
+let spawnRate = 0.075;
+let spawnRateHardcap = spawnRate / limitModifier;
+let numParticles = 100;
+let particleHardcap = numParticles * limitModifier;
 let autoAdjustParticleAmount = true;
 let targetFrames = 57;
 ///////////////////
