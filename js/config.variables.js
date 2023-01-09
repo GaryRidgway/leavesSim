@@ -13,11 +13,17 @@ let spawnArea = {
 let frameDelayMult = 0;
 
 
+// Leaf vars.
+let particleBaseSize = 30;
+let leafBaseSize = 100;
+let leafAsset = "assets/roughLeaf.png";
+
+
 let particleRisk = 100;
 let limitModifier = 2;
 let spawnRate = 0.075;
 let spawnRateHardcap = spawnRate / limitModifier;
-let numParticles = 100;
+let numParticles = 5;
 let particleHardcap = numParticles * limitModifier;
 let autoAdjustParticleAmount = true;
 let targetFrames = 57;

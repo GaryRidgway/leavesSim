@@ -8,6 +8,7 @@ var s1 = function (sketch) {
     sketch.fpsData = {
         fpsValElement: null,
         adjustedNumParticles: null,
+        currentNumParticles: null,
         adjustmentCoefficient: null,
         past60Frames: [],
         updateTracker: 10000,
@@ -22,12 +23,12 @@ var s1 = function (sketch) {
 
     sketch.setup = function () {
         sketch.leafCanvas = sketch.createCanvas(canvasDims.w, canvasDims.h);
-        sketch.leafCanvas.position(0, 0);
         sketch.leafCanvas.id('leafCanvas');
-        sketch.leafCanvas.parent('leafCanvasContainer');
+        sketch.leafCanvas.parent('canvasSpace');
         sketch.fpsData.fpsValElement = document.querySelector('#leafSim .fps .value');
-        sketch.fpsData.adjustedNumParticles = document.querySelector('#leafSim .particles .value');
         sketch.fpsData.spawnRate = document.querySelector('#leafSim .spawnRate .value');
+        sketch.fpsData.adjustedNumParticles = document.querySelector('#leafSim .max-particles .value');
+        sketch.fpsData.currentNumParticles = document.querySelector('#leafSim .particles .value');
     };
 
     sketch.draw = function () {
@@ -228,9 +229,7 @@ var s1 = function (sketch) {
                 sketch.particles.splice(i, 1);
             } else {
                 sketch.particles[i].update(sketch);
-                if(debug.particles) {
-                    sketch.particles[i].draw(sketch);
-                }
+                sketch.particles[i].draw(sketch);
             }
         }
     };
@@ -270,14 +269,16 @@ var s1 = function (sketch) {
                     sketch.spawnRate = Math.max((
                         Math.max(Math.min(sketch.spawnRate / adjustmentCoefficient, 1), spawnRate / particleRisk) * 2
                         + sketch.spawnRate
-                    ) / 2.8, spawnRateHardcap);
+                    ) / 3, spawnRateHardcap);
                 }
 
                 sketch.fpsData.averageFPS = Math.floor(last60FrameSum / newNumLast60Frames);
                 if (sketch.fpsData.averageFPS !== Infinity) {
                     sketch.fpsData.fpsValElement.innerText = sketch.fpsData.averageFPS;
-                    sketch.fpsData.adjustedNumParticles.innerText = rRound(sketch.numParticles, 2);
                     sketch.fpsData.spawnRate.innerText = rRound(1/sketch.spawnRate, 2);
+                    sketch.fpsData.adjustedNumParticles.innerText = rRound(sketch.numParticles, 2);
+                    sketch.fpsData.currentNumParticles.innerText = rRound(sketch.particles.length, 2);
+                    // sketch.fpsData.spawnRate.innerText = rRound(sketch.spawnRate, 5);
                 }
 
                 // Reset it to 0 so we dont do this all the time.

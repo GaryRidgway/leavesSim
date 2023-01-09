@@ -2,6 +2,10 @@ body {
   margin: 0;
 }
 
+#leafCanvasContainer {
+  position: absolute;
+}
+
 #leafSim {
   position: relative;
 }
@@ -10,4 +14,18 @@ body {
 }
 .debug-value {
   display: flex;
+}
+
+#canvasCompanion {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  overflow: hidden;
+}
+
+.leaf {
+  position: absolute;
+  height: auto;
+  filter: drop-shadow(0 0 0.75rem rgb(74, 73, 73));
 }

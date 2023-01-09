@@ -2,9 +2,10 @@ function particle(sketch, debugline) {
     this.id = makeId();
     this.modifier = Math.random() * 20 - 10;
     this.size = {
-        w: 30 + this.modifier,
-        h: 30 + this.modifier
+        w: particleBaseSize + this.modifier,
+        h: particleBaseSize + this.modifier
     };
+    this.sizeModified = (this.size.w / particleBaseSize) * leafBaseSize;
 
     this.Cd = 0.04;
 
@@ -38,6 +39,22 @@ function particle(sketch, debugline) {
     this.position = pointInSpawnArea(spawnArea, this.size);
     this.position.y = this.position.y / hScale;
     this.rotation = 0;
+
+    // Initialize html stuff
+    // https://developer.mozilla.org/en-US/docs/Web/API/Document/createElement
+    const leaf = document.createElement("img");
+    leaf.id = this.id;
+    leaf.src = leafAsset;
+    leaf.classList = ['leaf'];
+    leaf.style.width = this.sizeModified + 'px';
+    const canvasCompanion = document.getElementById('canvasCompanion');
+    canvasCompanion.appendChild(leaf);
+
+    this.destroy = function() {
+        if (leaf) {
+            leaf.remove();
+        }
+    }
 
     this.update = function (sketch) {
         if (this.frameDelay > 0) {
@@ -119,6 +136,7 @@ function particle(sketch, debugline) {
             this.position.y < 0 - this.size.h / hScale ||
             this.position.x < 0 - this.size.w
         ) {
+            this.destroy();
             return true;
         } else {
             return false;
@@ -128,59 +146,64 @@ function particle(sketch, debugline) {
     this.draw = function (sketch) {
         let posx = this.position.x;
         let posy = this.position.y * hScale;
+        leaf.style.left = posx - this.sizeModified/2 + 'px';
+        leaf.style.top = posy - this.sizeModified/2 + 'px';
+        leaf.style.transform = 'rotate(' + this.rotation + 'rad)';
 
-        let normalizedVectorPercentage = vectorNormalize(
-            {
-                x: this.velocity.h,
-                y: this.velocity.v * hScale
-            },
-            true
-        );
 
-        sketch.push();
+        if(debug.particles) {
+            let normalizedVectorPercentage = vectorNormalize(
+                {
+                    x: this.velocity.h,
+                    y: this.velocity.v * hScale
+                },
+                true
+            );
+            sketch.push();
 
-        // Translate to the center of the particle for rotation.
-        sketch.translate(posx, posy);
-        sketch.rotate(this.rotation);
-        sketch.stroke(255);
-        sketch.strokeWeight(8);
-        sketch.line(
-            0,
-            0,
-            0,
-            Math.max(
-            this.size.h *
-                (normalizedVectorPercentage.x * Math.abs(this.velocity.h / 2)) +
-                normalizedVectorPercentage.y *
-                Math.abs(this.velocity.v * hScale * 12),
-            this.size.h / 2
-            ) - 4
-        );
-        sketch.stroke(0);
-        sketch.strokeWeight(1);
-        sketch.fill("#3f8ad1");
-        sketch.circle(0, 0, this.size.w);
-        sketch.strokeWeight(2);
+                // Translate to the center of the particle for rotation.
+                sketch.translate(posx, posy);
+                sketch.rotate(this.rotation);
+                sketch.stroke(255);
+                sketch.strokeWeight(8);
+                sketch.line(
+                    0,
+                    0,
+                    0,
+                    Math.max(
+                    this.size.h *
+                        (normalizedVectorPercentage.x * Math.abs(this.velocity.h / 2)) +
+                        normalizedVectorPercentage.y *
+                        Math.abs(this.velocity.v * hScale * 12),
+                    this.size.h / 2
+                    ) - 4
+                );
+                sketch.stroke(0);
+                sketch.strokeWeight(1);
+                sketch.fill("#3f8ad1");
+                sketch.circle(0, 0, this.size.w);
+                sketch.strokeWeight(2);
 
-        sketch.line(
-            -this.size.w * 0.66,
-            this.size.h / 2,
-            this.size.w * 0.66,
-            this.size.h / 2
-        );
-        sketch.line(
-            0,
-            0,
-            0,
-            Math.max(
-            this.size.h *
-                (normalizedVectorPercentage.x * Math.abs(this.velocity.h / 2)) +
-                normalizedVectorPercentage.y *
-                Math.abs(this.velocity.v * hScale * 12),
-            this.size.h / 2
-            )
-        );
-        sketch.pop();
+                sketch.line(
+                    -this.size.w * 0.66,
+                    this.size.h / 2,
+                    this.size.w * 0.66,
+                    this.size.h / 2
+                );
+                sketch.line(
+                    0,
+                    0,
+                    0,
+                    Math.max(
+                    this.size.h *
+                        (normalizedVectorPercentage.x * Math.abs(this.velocity.h / 2)) +
+                        normalizedVectorPercentage.y *
+                        Math.abs(this.velocity.v * hScale * 12),
+                    this.size.h / 2
+                    )
+                );
+            sketch.pop();
+        }
     };
 
     // https://www.grc.nasa.gov/www/k-12/VirtualAero/BottleRocket/airplane/termv.html
