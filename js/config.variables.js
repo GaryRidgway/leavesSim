@@ -23,8 +23,11 @@ let particleRisk = 100;
 let limitModifier = 2;
 let spawnRate = 0.075;
 let spawnRateHardcap = spawnRate / limitModifier;
-let numParticles = 5;
+let numParticles = 100;
 let particleHardcap = numParticles * limitModifier;
 let autoAdjustParticleAmount = true;
 let targetFrames = 57;
+
+const maxParticlesSpawnRateMultiplier = 0.5;
+
 ///////////////////

@@ -261,6 +261,8 @@ var s1 = function (sketch) {
 
                 // Auto adjust particles?
                 if (autoAdjustParticleAmount) {
+                    let rateMultiplier = maxParticlesSpawnRateMultiply(sketch.particles.length, sketch.numParticles);
+                    console.log(rateMultiplier);
                     let adjustmentCoefficient = sketch.fpsData.averageFPS / targetFrames;
                     sketch.numParticles = Math.min((
                         Math.min(Math.max(sketch.numParticles * adjustmentCoefficient, 0), particleRisk * numParticles)
@@ -269,7 +271,7 @@ var s1 = function (sketch) {
                     sketch.spawnRate = Math.max((
                         Math.max(Math.min(sketch.spawnRate / adjustmentCoefficient, 1), spawnRate / particleRisk) * 2
                         + sketch.spawnRate
-                    ) / 3, spawnRateHardcap);
+                    ) / 3, spawnRateHardcap) / rateMultiplier;
                 }
 
                 sketch.fpsData.averageFPS = Math.floor(last60FrameSum / newNumLast60Frames);

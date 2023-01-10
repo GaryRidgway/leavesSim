@@ -123,3 +123,14 @@ function makeId(length = 5) {
     idMod++;
     return result + idMod;
 }
+
+
+// Function to modify the power of the spawn rate as the ratio of particles/maxParticles => 1.
+// https://www.desmos.com/calculator/tfgop7zbk6
+function maxParticlesSpawnRateMultiply(currentParticles, maxParticles) {
+    let cappedCurrentParticles = Math.min(currentParticles, maxParticles);
+    let ratio = cappedCurrentParticles/maxParticles;
+    let a = -maxParticlesSpawnRateMultiplier +1;
+    let b = 1 - Math.pow(10, 4*(ratio-1));
+    return(a*b+maxParticlesSpawnRateMultiplier);
+}
