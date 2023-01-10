@@ -27,5 +27,11 @@ body {
 .leaf {
   position: absolute;
   height: auto;
-  filter: drop-shadow(0 0 0.75rem rgb(74, 73, 73));
+  filter: drop-shadow(0 0 0.75rem rgb(0,0,0));
+}
+
+.leaf img {
+  position: relative;
+  width: 100%;
+  height: auto;
 }
