@@ -131,6 +131,19 @@ function maxParticlesSpawnRateMultiply(currentParticles, maxParticles) {
     let cappedCurrentParticles = Math.min(currentParticles, maxParticles);
     let ratio = cappedCurrentParticles/maxParticles;
     let a = -maxParticlesSpawnRateMultiplier +1;
-    let b = 1 - Math.pow(10, 4*(ratio-1));
+    let b = 1 - Math.pow(10, falloffPower*(ratio-1));
     return(a*b+maxParticlesSpawnRateMultiplier);
+}
+
+// https://www.desmos.com/calculator/1beja2zkte
+function timeBasedCertaintyMultiplier(timeCount) {
+    if (timeCount <= timeBuffer) {
+        const completionRatio = timeCount/timeBuffer;
+        const curve = Math.pow(10, 4*(completionRatio-1));
+        const ratioAdjustment = (minMixRatio - maxMult)
+        return curve*ratioAdjustment + maxMult;
+    }
+    else {
+        return maxMult;
+    }
 }

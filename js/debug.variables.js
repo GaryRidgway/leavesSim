@@ -1,5 +1,5 @@
 // Debug variables
-let debug = {
+const debug = {
     doProdDebug: false,
 
 
@@ -15,7 +15,11 @@ let debug = {
         centerY: canvasDims.h / 2,
         radius: 2
     },
-    clearCanvas: false
+    clearCanvas: false,
+
+    performaceGraphData: {
+        period: 20//s
+    }
 };
 
 let prodDebug = {

@@ -17,6 +17,7 @@ let frameDelayMult = 0;
 let particleBaseSize = 10;
 let particleVariability = 5;
 let leafBaseSize = 20;
+let startingVelocityMultiplier = 0.5;
 let leafAssets = [
     {
         path: "assets/cb1.png",
@@ -40,15 +41,21 @@ let leafAssets = [
 
 
 let particleRisk = 100;
-let limitModifier = 2;
+let limitModifier = 1.5;
 let spawnRate = 0.075;
 let spawnRateHardcap = spawnRate / limitModifier;
-let numParticles = 100;
+let numParticles = 1000;
 
 let particleHardcap = numParticles * limitModifier;
 let autoAdjustParticleAmount = true;
 let targetFrames = 57;
 
 const maxParticlesSpawnRateMultiplier = 0.5;
+const falloffPower = 2;
+
+// frames to wait in ms before allowing complete control from auto adjust in ms.
+const timeBuffer = 10000;
+const maxMult = 1;
+const minMixRatio = 0.5;
 
 ///////////////////

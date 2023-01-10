@@ -1,9 +1,13 @@
 body {
   margin: 0;
+  transform: transale3d(0,0,0);
 }
 
 #leafCanvasContainer {
   position: absolute;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
 }
 
 #leafSim {
@@ -27,11 +31,18 @@ body {
 .leaf {
   position: absolute;
   height: auto;
-  filter: drop-shadow(0 0 0.75rem rgb(0,0,0));
+  filter: drop-shadow(0 0 0.75rem rgb(78, 25, 115));
 }
 
 .leaf img {
   position: relative;
   width: 100%;
   height: auto;
+}
+
+.debugData {
+  color: #fafafa;
+  padding: 1rem;
+  font-family: 'Roboto', sans-serif;
+  font-weight: 300;
 }

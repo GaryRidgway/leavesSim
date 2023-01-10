@@ -23,10 +23,12 @@ function particle(sketch, debugline) {
     this.swayBreadth = Math.PI / 9;
     this.swayOffset = Math.random() * 100;
 
+    let rVelH = Math.random() * 2 * startingVelocityMultiplier - startingVelocityMultiplier;
+    let rVelV = Math.random() * 2 * startingVelocityMultiplier - startingVelocityMultiplier;
     this.velocity = {
-        h: 0,
-        v: 0,
-        total: 0
+        h: rVelH,
+        v: rVelV,
+        total: rVelH + rVelV
     };
     this.acceleration = {
         h: 0,
@@ -53,7 +55,7 @@ function particle(sketch, debugline) {
     leafIMG.src = leafData.path;
     leafIMG.style.left = leafData.x + 'px';
     leafIMG.style.top = leafData.y + 'px';
-    leafIMG.style.transform = 'rotate(' + leafData.r + 'rad)';
+    leafIMG.style.transform = 'translate(' + leafData.x + 'px, ' + leafData.y + 'px) rotate(' + leafData.r + 'rad)';
     const canvasCompanion = document.getElementById('canvasCompanion');
     canvasCompanion.appendChild(leaf);
 
