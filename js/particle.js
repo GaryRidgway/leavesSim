@@ -1,6 +1,6 @@
 function particle(sketch, debugline) {
     this.id = makeId();
-    this.modifier = Math.random() * 20 - 10;
+    this.modifier = Math.random() * particleVariability - particleVariability/2;
     this.size = {
         w: particleBaseSize + this.modifier,
         h: particleBaseSize + this.modifier
@@ -19,7 +19,7 @@ function particle(sketch, debugline) {
     // Delay before actions to give more randomness to the falling.
     this.frameDelay = Math.floor(Math.random() * 400 * frameDelayMult);
 
-    this.swaySpeed = 0.075 + Math.random() / 10 - 0.05;
+    this.swaySpeed = 0.05 + Math.random() / 10 - 0.05;
     this.swayBreadth = Math.PI / 9;
     this.swayOffset = Math.random() * 100;
 
@@ -42,11 +42,18 @@ function particle(sketch, debugline) {
 
     // Initialize html stuff
     // https://developer.mozilla.org/en-US/docs/Web/API/Document/createElement
-    const leaf = document.createElement("img");
+    const leafData = leafAssets[Math.floor(Math.random()*leafAssets.length)];
+    const leaf = document.createElement("div");
+    const leafIMG = document.createElement("img");
     leaf.id = this.id;
-    leaf.src = leafAsset;
     leaf.classList = ['leaf'];
     leaf.style.width = this.sizeModified + 'px';
+    leaf.style.height = this.sizeModified + 'px';
+    leaf.appendChild(leafIMG);
+    leafIMG.src = leafData.path;
+    leafIMG.style.left = leafData.x + 'px';
+    leafIMG.style.top = leafData.y + 'px';
+    leafIMG.style.transform = 'rotate(' + leafData.r + 'rad)';
     const canvasCompanion = document.getElementById('canvasCompanion');
     canvasCompanion.appendChild(leaf);
 

@@ -14,16 +14,36 @@ let frameDelayMult = 0;
 
 
 // Leaf vars.
-let particleBaseSize = 30;
-let leafBaseSize = 100;
-let leafAsset = "assets/roughLeaf.png";
+let particleBaseSize = 10;
+let particleVariability = 5;
+let leafBaseSize = 20;
+let leafAssets = [
+    {
+        path: "assets/cb1.png",
+        x: 0,
+        y: 5,
+        r: 5.75
+    },
+    {
+        path: "assets/cb2.png",
+        x: 0,
+        y: 8,
+        r: 5.54
+    },
+    {
+        path: "assets/cb3.png",
+        x: 0,
+        y: 0,
+        r: 0.85
+    },
+];
 
 
 let particleRisk = 100;
 let limitModifier = 2;
 let spawnRate = 0.075;
 let spawnRateHardcap = spawnRate / limitModifier;
-let numParticles = 5;
+let numParticles = 150;
 let particleHardcap = numParticles * limitModifier;
 let autoAdjustParticleAmount = true;
 let targetFrames = 57;

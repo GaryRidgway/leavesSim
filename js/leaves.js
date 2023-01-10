@@ -33,7 +33,12 @@ var s1 = function (sketch) {
 
     sketch.draw = function () {
         sketch.replaceFPS();
-        sketch.background(175);
+        if (debug.clearCanvas) {
+            sketch.clear();
+        }
+        else{
+            sketch.background(30);
+        }
         sketch.particleLoop();
         sketch.trackMouse();
         if(debug.drawSpawnArea) {
@@ -278,7 +283,6 @@ var s1 = function (sketch) {
                     sketch.fpsData.spawnRate.innerText = rRound(1/sketch.spawnRate, 2);
                     sketch.fpsData.adjustedNumParticles.innerText = rRound(sketch.numParticles, 2);
                     sketch.fpsData.currentNumParticles.innerText = rRound(sketch.particles.length, 2);
-                    // sketch.fpsData.spawnRate.innerText = rRound(sketch.spawnRate, 5);
                 }
 
                 // Reset it to 0 so we dont do this all the time.

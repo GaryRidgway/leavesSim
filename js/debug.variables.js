@@ -3,11 +3,11 @@ let debug = {
     doProdDebug: false,
 
 
-    particles: true,
+    particles: false,
     stopForces : false,
     stopTurbulence: false,
     bounceArcs: true,
-    mouseTracking: true,
+    mouseTracking: false,
     drawSpawnArea: true,
     centerSpawn: false,
     centerSpawnArea: {
@@ -15,6 +15,7 @@ let debug = {
         centerY: canvasDims.h / 2,
         radius: 2
     },
+    clearCanvas: false
 };
 
 let prodDebug = {
