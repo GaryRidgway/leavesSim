@@ -41,10 +41,10 @@ var s1 = function (sketch) {
             sketch.background(30);
         }
         sketch.particleLoop();
-        sketch.trackMouse();
         if(debug.drawSpawnArea) {
             sketch.drawSpawnArea();
         }
+        sketch.trackMouse();
         if(debug.bounceArcs) {
             sketch.drawBounceArcs();
         }
@@ -385,99 +385,101 @@ var s1 = function (sketch) {
         let doBufferedLine = false;
         let bufferedLine = [];
 
-        // The plot.
         sketch.push();
-        sketch.fill('rgba(43,194,49, .1)');
-        sketch.stroke('rgba(43,194,49, .4)');
-            sketch.beginShape();
-                sketch.vertex(0,window.innerHeight);
-                if (points.length > 0) {
-                    sketch.vertex(0,window.innerHeight-(points[0].particles * scaledHeight));
-                }
-                points.forEach((element, index) => {
-                    sketch.vertex(element.modTime*hDivision, window.innerHeight-(element.particles * scaledHeight));
+            // The plot.
+            sketch.push();
+                sketch.fill('rgba(43,194,49, .1)');
+                sketch.stroke('rgba(43,194,49, .4)');
+                sketch.beginShape();
+                    sketch.vertex(0,window.innerHeight);
+                    if (points.length > 0) {
+                        sketch.vertex(0,window.innerHeight-(points[0].particles * scaledHeight));
+                    }
+                    points.forEach((element, index) => {
+                        sketch.vertex(element.modTime*hDivision, window.innerHeight-(element.particles * scaledHeight));
 
-                    if(points[index+1] && element.rotation > points[index+1].rotation) {
-                        doBufferedLine = true;
-                        bufferedLine= [
-                            element.modTime*hDivision, window.innerHeight-data.highestParticleCount*scaledHeight,
-                            element.modTime*hDivision, window.innerHeight
-                        ]
-                        sketch.vertex(element.modTime*hDivision, window.innerHeight-(points[index+1].particles * scaledHeight));
+                        if(points[index+1] && element.rotation > points[index+1].rotation) {
+                            doBufferedLine = true;
+                            bufferedLine= [
+                                element.modTime*hDivision, window.innerHeight-data.highestParticleCount*scaledHeight,
+                                element.modTime*hDivision, window.innerHeight
+                            ]
+                            sketch.vertex(element.modTime*hDivision, window.innerHeight-(points[index+1].particles * scaledHeight));
+                        }
+                        else if (bufferedLine.length === 0 && index === points.length-1) {
+                            doBufferedLine = true;
+                            bufferedLine= [
+                                element.modTime*hDivision, window.innerHeight-data.highestParticleCount*scaledHeight,
+                                element.modTime*hDivision, window.innerHeight
+                            ]
+                            sketch.vertex(element.modTime*hDivision, window.innerHeight);
+                        }
+                    });
+                    
+                    if (points.length > 0 && data.currentRotation > 0) {
+                        sketch.vertex(window.innerWidth,window.innerHeight-(points[points.length-1].particles * scaledHeight));
                     }
-                    else if (bufferedLine.length === 0 && index === points.length-1) {
-                        doBufferedLine = true;
-                        bufferedLine= [
-                            element.modTime*hDivision, window.innerHeight-data.highestParticleCount*scaledHeight,
-                            element.modTime*hDivision, window.innerHeight
-                        ]
-                        sketch.vertex(element.modTime*hDivision, window.innerHeight);
-                    }
-                });
-                
-                if (points.length > 0 && data.currentRotation > 0) {
-                    sketch.vertex(window.innerWidth,window.innerHeight-(points[points.length-1].particles * scaledHeight));
+                    sketch.vertex(window.innerWidth,window.innerHeight);
+                sketch.endShape();
+                if (doBufferedLine) {
+                    sketch.push();
+                        sketch.strokeCap(sketch.SQUARE);
+                        sketch.stroke('rgba(51,255,59, .6)');
+                        sketch.strokeWeight(2);
+                        sketch.line(
+                            bufferedLine[0], bufferedLine[1],
+                            bufferedLine[2], bufferedLine[3]
+                        );
+                    sketch.pop();
                 }
-                sketch.vertex(window.innerWidth,window.innerHeight);
-            sketch.endShape();
-            if (doBufferedLine) {
-                sketch.push();
-                    sketch.strokeCap(sketch.SQUARE);
-                    sketch.stroke('rgba(51,255,59, .6)');
-                    sketch.strokeWeight(2);
+            sketch.pop();
+
+            // The Y scale.
+            let yPortions = 8;
+            let leftPadding = 5;
+            let textBottomPadding = 3;
+            let vDivision = (window.innerHeight-topPadding)/yPortions;
+            sketch.strokeCap(sketch.SQUARE);
+            sketch.fill('rgba(255,255,255,.8)')
+            sketch.stroke('rgba(255,255,255,.2)')
+            sketch.push();
+                for (let i = 0; i<yPortions+1; i++) {
+                    sketch.text(data.highestParticleCount/yPortions*i, leftPadding, window.innerHeight - (vDivision * i) - textBottomPadding);
                     sketch.line(
-                        bufferedLine[0], bufferedLine[1],
-                        bufferedLine[2], bufferedLine[3]
+                        0, window.innerHeight - (vDivision * i),
+                        window.innerWidth, window.innerHeight - (vDivision * i)
                     );
-                sketch.pop();
-            }
-        sketch.pop();
+                }
+            sketch.pop();
 
-        // The Y scale.
-        let yPortions = 8;
-        let leftPadding = 5;
-        let textBottomPadding = 3;
-        let vDivision = (window.innerHeight-topPadding)/yPortions;
-        sketch.strokeCap(sketch.SQUARE);
-        sketch.fill('rgba(255,255,255,.8)')
-        sketch.stroke('rgba(255,255,255,.2)')
-        sketch.push();
-            for (let i = 0; i<yPortions+1; i++) {
-                sketch.text(data.highestParticleCount/yPortions*i, leftPadding, window.innerHeight - (vDivision * i) - textBottomPadding);
-                sketch.line(
-                    0, window.innerHeight - (vDivision * i),
-                    window.innerWidth, window.innerHeight - (vDivision * i)
-                );
-            }
-        sketch.pop();
+            // The X scale.
+            const period = sketch.performaceGraphData.period;
+            leftPadding = -3;
+            const hLowerBound = data.hLowerBound;
+            sketch.push();
+            let multiplier = 1;
+                if (hDivision < hLowerBound) {
+                    multiplier = Math.ceil(hLowerBound/hDivision);
+                }
+                for (let i = multiplier; i<period+1; i = i + multiplier) {
+                    sketch.textAlign(sketch.RIGHT);
+                    sketch.text(i, hDivision*i + leftPadding, window.innerHeight - textBottomPadding);
+                    sketch.line(
+                        hDivision*i, window.innerHeight,
+                        hDivision*i, window.innerHeight - (vDivision * yPortions)
+                    );
+                }
+            sketch.pop();
 
-        // The X scale.
-        const period = sketch.performaceGraphData.period;
-        leftPadding = -3;
-        const hLowerBound = data.hLowerBound;
-        sketch.push();
-        let multiplier = 1;
-            if (hDivision < hLowerBound) {
-                multiplier = Math.ceil(hLowerBound/hDivision);
-            }
-            for (let i = multiplier; i<period+1; i = i + multiplier) {
-                sketch.textAlign(sketch.RIGHT);
-                sketch.text(i, hDivision*i + leftPadding, window.innerHeight - textBottomPadding);
-                sketch.line(
-                    hDivision*i, window.innerHeight,
-                    hDivision*i, window.innerHeight - (vDivision * yPortions)
-                );
-            }
-        sketch.pop();
-
-        // Labels.
-        sketch.push();
-            sketch.textSize(16);
-            sketch.textAlign(sketch.CENTER, sketch.BOTTOM);
-            sketch.text('Seconds', window.innerWidth/2, window.innerHeight - 20);
-            sketch.translate(40, (window.innerHeight-topPadding)/2 + topPadding)
-            sketch.rotate(sketch.HALF_PI)
-            sketch.text('Particles', 0,0);
+            // Labels.
+            sketch.push();
+                sketch.textSize(16);
+                sketch.textAlign(sketch.CENTER, sketch.BOTTOM);
+                sketch.text('Seconds', window.innerWidth/2, window.innerHeight - 20);
+                sketch.translate(40, (window.innerHeight-topPadding)/2 + topPadding)
+                sketch.rotate(sketch.HALF_PI)
+                sketch.text('Particles', 0,0);
+            sketch.pop();
         sketch.pop();
     }
 };

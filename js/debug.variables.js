@@ -3,12 +3,12 @@ const debug = {
     doProdDebug: false,
 
 
-    particles: false,
+    particles: true,
     allowStop: true,
     stopForces : false,
     stopTurbulence: false,
     bounceArcs: true,
-    mouseTracking: false,
+    mouseTracking: true,
     drawSpawnArea: true,
     centerSpawn: false,
     centerSpawnArea: {
