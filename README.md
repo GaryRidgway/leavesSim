@@ -10,3 +10,4 @@
 - reorganize config
 - remove mouse tracking if it is at the edge of the canvas.
 - Possible 3d rotation?
+- Ship destroy Game???
