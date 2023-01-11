@@ -51,7 +51,7 @@ var s1 = function (sketch) {
         if(debug.allowStop && sketch.mouseIsPressed) {
             sketch.noLoop();
         }
-        if(debug.performanceGraph) {
+        if(debug.debugPanel && debug.performanceGraph) {
             sketch.drawPerformaceGraph();
         }
     };
@@ -249,6 +249,12 @@ var s1 = function (sketch) {
     };
 
     sketch.replaceFPS = function() {
+        if (!debug.debugPanel) {
+            let leafSim = document.querySelector('#leafSim .debugData');
+            leafSim.classList.add('hidden');
+            return;
+        }
+
         if (sketch.frameCount === 0){
             return
         }

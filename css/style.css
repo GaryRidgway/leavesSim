@@ -16,6 +16,10 @@ body {
 .debugData {
   position: absolute;
 }
+
+.debugData.hidden {
+  display: none;
+}
 .debug-value {
   display: flex;
 }

@@ -2,7 +2,7 @@
 const debug = {
     doProdDebug: false,
 
-
+    debugPanel:true,
     particles: true,
     allowStop: true,
     stopForces : false,
@@ -18,6 +18,7 @@ const debug = {
     },
     clearCanvas: false,
 
+    // Dependant on the debugPanel.
     performanceGraph: true,
     performaceGraphData: {
         baseParticleScaleMax: 90,
