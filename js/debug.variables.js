@@ -1,6 +1,7 @@
+p5.disableFriendlyErrors = true;
 // Debug variables
-const debug = {
-    doProdDebug: false,
+let debug = {
+    doProdDebug: true,
 
     debugPanel:true,
     particles: true,
@@ -22,24 +23,22 @@ const debug = {
     performanceGraph: true,
     performaceGraphData: {
         baseParticleScaleMax: 90,
-        period: 1*60,//s
+        period: 2*60,//s
         horizontalMarkingLowerBound: 20
     }
 };
 
 let prodDebug = {
+    debugPanel:false,
     particles: false,
-    stopForces: false,
+    allowStop: false,
+    stopForces : false,
     stopTurbulence: false,
-    bounceArcs: false,
+    bounceArcs: true,
     mouseTracking: false,
     drawSpawnArea: false,
     centerSpawn: false,
-    centerSpawnArea: {
-        centerX: window.innerWidth / 2,
-        centerY: window.innerHeight / 2,
-        radius: 2
-    },
+    clearCanvas: false,
 };
 
 if (debug.doProdDebug) {
