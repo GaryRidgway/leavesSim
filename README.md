@@ -6,3 +6,4 @@
 - Tweak spawning code with new performance graph usage.
 - production debug array fix (probably last)
 - reorganize config
+- remove mouse tracking if it is at the edge of the canvas.
