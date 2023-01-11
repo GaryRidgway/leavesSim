@@ -18,9 +18,9 @@ const debug = {
     },
     clearCanvas: false,
 
-    performanceGraph: false,
+    performanceGraph: true,
     performaceGraphData: {
-        baseParticleScaleMax: 905,
+        baseParticleScaleMax: 90,
         period: 1*60,//s
         horizontalMarkingLowerBound: 20
     }

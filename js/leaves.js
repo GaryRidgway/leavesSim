@@ -460,7 +460,7 @@ var s1 = function (sketch) {
             if (hDivision < hLowerBound) {
                 multiplier = Math.ceil(hLowerBound/hDivision);
             }
-            for (let i = 1; i<period+1; i = i + multiplier) {
+            for (let i = multiplier; i<period+1; i = i + multiplier) {
                 sketch.textAlign(sketch.RIGHT);
                 sketch.text(i, hDivision*i + leftPadding, window.innerHeight - textBottomPadding);
                 sketch.line(
