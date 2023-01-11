@@ -53,8 +53,6 @@ function particle(sketch, debugline) {
     leaf.style.height = this.sizeModified + 'px';
     leaf.appendChild(leafIMG);
     leafIMG.src = leafData.path;
-    leafIMG.style.left = leafData.x + 'px';
-    leafIMG.style.top = leafData.y + 'px';
     leafIMG.style.transform = 'translate(' + leafData.x + 'px, ' + leafData.y + 'px) rotate(' + leafData.r + 'rad)';
     const canvasCompanion = document.getElementById('canvasCompanion');
     canvasCompanion.appendChild(leaf);
@@ -140,8 +138,8 @@ function particle(sketch, debugline) {
 
     this.deletable = function () {
         if (
-            this.position.y > canvasDims.h / hScale + this.size.h / hScale ||
-            this.position.x > canvasDims.w + this.size.w ||
+            this.position.y > window.innerHeight / hScale + this.size.h / hScale ||
+            this.position.x > window.innerWidth + this.size.w ||
             this.position.y < 0 - this.size.h / hScale ||
             this.position.x < 0 - this.size.w
         ) {
@@ -155,9 +153,7 @@ function particle(sketch, debugline) {
     this.draw = function (sketch) {
         let posx = this.position.x;
         let posy = this.position.y * hScale;
-        leaf.style.left = posx - this.sizeModified/2 + 'px';
-        leaf.style.top = posy - this.sizeModified/2 + 'px';
-        leaf.style.transform = 'rotate(' + this.rotation + 'rad)';
+        leaf.style.transform = 'translate(' + (posx - this.sizeModified/2) + 'px, ' + (posy - this.sizeModified/2) + 'px) rotate(' + this.rotation + 'rad)';
 
 
         if(debug.particles) {

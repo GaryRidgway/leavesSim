@@ -4,6 +4,7 @@ const debug = {
 
 
     particles: false,
+    allowStop: true,
     stopForces : false,
     stopTurbulence: false,
     bounceArcs: true,
@@ -11,14 +12,17 @@ const debug = {
     drawSpawnArea: true,
     centerSpawn: false,
     centerSpawnArea: {
-        centerX: canvasDims.w / 2,
-        centerY: canvasDims.h / 2,
+        centerX: window.innerWidth / 2,
+        centerY: window.innerHeight / 2,
         radius: 2
     },
     clearCanvas: false,
 
+    performanceGraph: false,
     performaceGraphData: {
-        period: 20//s
+        baseParticleScaleMax: 905,
+        period: 1*60,//s
+        horizontalMarkingLowerBound: 20
     }
 };
 
@@ -31,8 +35,8 @@ let prodDebug = {
     drawSpawnArea: false,
     centerSpawn: false,
     centerSpawnArea: {
-        centerX: canvasDims.w / 2,
-        centerY: canvasDims.h / 2,
+        centerX: window.innerWidth / 2,
+        centerY: window.innerHeight / 2,
         radius: 2
     },
 };

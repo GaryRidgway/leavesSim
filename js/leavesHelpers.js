@@ -147,3 +147,34 @@ function timeBasedCertaintyMultiplier(timeCount) {
         return maxMult;
     }
 }
+
+function graphArrayTruncateAndIndex(performanceGraphData, modTime, rotation) {
+    let insertIndex = 0;
+    let truncateEndIndex = 0;
+    let truncateStartIndex = 0;
+    if(performanceGraphData.length === 0) {
+        return {
+            index : insertIndex,
+            truncate: 0
+        };
+    }
+    else {
+        performanceGraphData.forEach(function(element) {
+            if (element.modTime < modTime) {
+                if (performanceGraphData[insertIndex].rotation === rotation) {
+                    truncateStartIndex = insertIndex;
+                }
+                if (performanceGraphData[insertIndex].rotation < rotation) {
+                    truncateEndIndex = insertIndex;
+                }
+                
+                insertIndex++;
+            }
+            else {
+                return;
+            }
+        });
+
+        return {index:insertIndex, truncate:Math.max(truncateEndIndex - truncateStartIndex, 0)};
+    }
+}
