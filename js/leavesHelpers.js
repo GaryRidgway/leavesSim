@@ -123,3 +123,58 @@ function makeId(length = 5) {
     idMod++;
     return result + idMod;
 }
+
+
+// Function to modify the power of the spawn rate as the ratio of particles/maxParticles => 1.
+// https://www.desmos.com/calculator/tfgop7zbk6
+function maxParticlesSpawnRateMultiply(currentParticles, maxParticles) {
+    let cappedCurrentParticles = Math.min(currentParticles, maxParticles);
+    let ratio = cappedCurrentParticles/maxParticles;
+    let a = -maxParticlesSpawnRateMultiplier +1;
+    let b = 1 - Math.pow(10, falloffPower*(ratio-1));
+    return(a*b+maxParticlesSpawnRateMultiplier);
+}
+
+// https://www.desmos.com/calculator/1beja2zkte
+function timeBasedCertaintyMultiplier(timeCount) {
+    if (timeCount <= timeBuffer) {
+        const completionRatio = timeCount/timeBuffer;
+        const curve = Math.pow(10, 4*(completionRatio-1));
+        const ratioAdjustment = (minMixRatio - maxMult)
+        return curve*ratioAdjustment + maxMult;
+    }
+    else {
+        return maxMult;
+    }
+}
+
+function graphArrayTruncateAndIndex(performanceGraphData, modTime, rotation) {
+    let insertIndex = 0;
+    let truncateEndIndex = 0;
+    let truncateStartIndex = 0;
+    if(performanceGraphData.length === 0) {
+        return {
+            index : insertIndex,
+            truncate: 0
+        };
+    }
+    else {
+        performanceGraphData.forEach(function(element) {
+            if (element.modTime < modTime) {
+                if (performanceGraphData[insertIndex].rotation === rotation) {
+                    truncateStartIndex = insertIndex;
+                }
+                if (performanceGraphData[insertIndex].rotation < rotation) {
+                    truncateEndIndex = insertIndex;
+                }
+                
+                insertIndex++;
+            }
+            else {
+                return;
+            }
+        });
+
+        return {index:insertIndex, truncate:Math.max(truncateEndIndex - truncateStartIndex, 0)};
+    }
+}

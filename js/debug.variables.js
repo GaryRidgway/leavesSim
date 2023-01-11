@@ -1,9 +1,10 @@
 // Debug variables
-let debug = {
+const debug = {
     doProdDebug: false,
 
 
     particles: true,
+    allowStop: true,
     stopForces : false,
     stopTurbulence: false,
     bounceArcs: true,
@@ -11,10 +12,18 @@ let debug = {
     drawSpawnArea: true,
     centerSpawn: false,
     centerSpawnArea: {
-        centerX: canvasDims.w / 2,
-        centerY: canvasDims.h / 2,
+        centerX: window.innerWidth / 2,
+        centerY: window.innerHeight / 2,
         radius: 2
     },
+    clearCanvas: false,
+
+    performanceGraph: true,
+    performaceGraphData: {
+        baseParticleScaleMax: 90,
+        period: 1*60,//s
+        horizontalMarkingLowerBound: 20
+    }
 };
 
 let prodDebug = {
@@ -26,8 +35,8 @@ let prodDebug = {
     drawSpawnArea: false,
     centerSpawn: false,
     centerSpawnArea: {
-        centerX: canvasDims.w / 2,
-        centerY: canvasDims.h / 2,
+        centerX: window.innerWidth / 2,
+        centerY: window.innerHeight / 2,
         radius: 2
     },
 };

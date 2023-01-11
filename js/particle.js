@@ -1,10 +1,11 @@
 function particle(sketch, debugline) {
     this.id = makeId();
-    this.modifier = Math.random() * 20 - 10;
+    this.modifier = Math.random() * particleVariability - particleVariability/2;
     this.size = {
-        w: 30 + this.modifier,
-        h: 30 + this.modifier
+        w: particleBaseSize + this.modifier,
+        h: particleBaseSize + this.modifier
     };
+    this.sizeModified = (this.size.w / particleBaseSize) * leafBaseSize;
 
     this.Cd = 0.04;
 
@@ -18,14 +19,16 @@ function particle(sketch, debugline) {
     // Delay before actions to give more randomness to the falling.
     this.frameDelay = Math.floor(Math.random() * 400 * frameDelayMult);
 
-    this.swaySpeed = 0.075 + Math.random() / 10 - 0.05;
+    this.swaySpeed = 0.05 + Math.random() / 10 - 0.05;
     this.swayBreadth = Math.PI / 9;
     this.swayOffset = Math.random() * 100;
 
+    let rVelH = Math.random() * 2 * startingVelocityMultiplier - startingVelocityMultiplier;
+    let rVelV = Math.random() * 2 * startingVelocityMultiplier - startingVelocityMultiplier;
     this.velocity = {
-        h: 0,
-        v: 0,
-        total: 0
+        h: rVelH,
+        v: rVelV,
+        total: rVelH + rVelV
     };
     this.acceleration = {
         h: 0,
@@ -38,6 +41,27 @@ function particle(sketch, debugline) {
     this.position = pointInSpawnArea(spawnArea, this.size);
     this.position.y = this.position.y / hScale;
     this.rotation = 0;
+
+    // Initialize html stuff
+    // https://developer.mozilla.org/en-US/docs/Web/API/Document/createElement
+    const leafData = leafAssets[Math.floor(Math.random()*leafAssets.length)];
+    const leaf = document.createElement("div");
+    const leafIMG = document.createElement("img");
+    leaf.id = this.id;
+    leaf.classList = ['leaf'];
+    leaf.style.width = this.sizeModified + 'px';
+    leaf.style.height = this.sizeModified + 'px';
+    leaf.appendChild(leafIMG);
+    leafIMG.src = leafData.path;
+    leafIMG.style.transform = 'translate(' + leafData.x + 'px, ' + leafData.y + 'px) rotate(' + leafData.r + 'rad)';
+    const canvasCompanion = document.getElementById('canvasCompanion');
+    canvasCompanion.appendChild(leaf);
+
+    this.destroy = function() {
+        if (leaf) {
+            leaf.remove();
+        }
+    }
 
     this.update = function (sketch) {
         if (this.frameDelay > 0) {
@@ -114,11 +138,12 @@ function particle(sketch, debugline) {
 
     this.deletable = function () {
         if (
-            this.position.y > canvasDims.h / hScale + this.size.h / hScale ||
-            this.position.x > canvasDims.w + this.size.w ||
+            this.position.y > window.innerHeight / hScale + this.size.h / hScale ||
+            this.position.x > window.innerWidth + this.size.w ||
             this.position.y < 0 - this.size.h / hScale ||
             this.position.x < 0 - this.size.w
         ) {
+            this.destroy();
             return true;
         } else {
             return false;
@@ -128,59 +153,62 @@ function particle(sketch, debugline) {
     this.draw = function (sketch) {
         let posx = this.position.x;
         let posy = this.position.y * hScale;
+        leaf.style.transform = 'translate(' + (posx - this.sizeModified/2) + 'px, ' + (posy - this.sizeModified/2) + 'px) rotate(' + this.rotation + 'rad)';
 
-        let normalizedVectorPercentage = vectorNormalize(
-            {
-                x: this.velocity.h,
-                y: this.velocity.v * hScale
-            },
-            true
-        );
 
-        sketch.push();
+        if(debug.particles) {
+            let normalizedVectorPercentage = vectorNormalize(
+                {
+                    x: this.velocity.h,
+                    y: this.velocity.v * hScale
+                },
+                true
+            );
+            sketch.push();
 
-        // Translate to the center of the particle for rotation.
-        sketch.translate(posx, posy);
-        sketch.rotate(this.rotation);
-        sketch.stroke(255);
-        sketch.strokeWeight(8);
-        sketch.line(
-            0,
-            0,
-            0,
-            Math.max(
-            this.size.h *
-                (normalizedVectorPercentage.x * Math.abs(this.velocity.h / 2)) +
-                normalizedVectorPercentage.y *
-                Math.abs(this.velocity.v * hScale * 12),
-            this.size.h / 2
-            ) - 4
-        );
-        sketch.stroke(0);
-        sketch.strokeWeight(1);
-        sketch.fill("#3f8ad1");
-        sketch.circle(0, 0, this.size.w);
-        sketch.strokeWeight(2);
+                // Translate to the center of the particle for rotation.
+                sketch.translate(posx, posy);
+                sketch.rotate(this.rotation);
+                sketch.stroke(255);
+                sketch.strokeWeight(8);
+                sketch.line(
+                    0,
+                    0,
+                    0,
+                    Math.max(
+                    this.size.h *
+                        (normalizedVectorPercentage.x * Math.abs(this.velocity.h / 2)) +
+                        normalizedVectorPercentage.y *
+                        Math.abs(this.velocity.v * hScale * 12),
+                    this.size.h / 2
+                    ) - 4
+                );
+                sketch.stroke(0);
+                sketch.strokeWeight(1);
+                sketch.fill("#3f8ad1");
+                sketch.circle(0, 0, this.size.w);
+                sketch.strokeWeight(2);
 
-        sketch.line(
-            -this.size.w * 0.66,
-            this.size.h / 2,
-            this.size.w * 0.66,
-            this.size.h / 2
-        );
-        sketch.line(
-            0,
-            0,
-            0,
-            Math.max(
-            this.size.h *
-                (normalizedVectorPercentage.x * Math.abs(this.velocity.h / 2)) +
-                normalizedVectorPercentage.y *
-                Math.abs(this.velocity.v * hScale * 12),
-            this.size.h / 2
-            )
-        );
-        sketch.pop();
+                sketch.line(
+                    -this.size.w * 0.66,
+                    this.size.h / 2,
+                    this.size.w * 0.66,
+                    this.size.h / 2
+                );
+                sketch.line(
+                    0,
+                    0,
+                    0,
+                    Math.max(
+                    this.size.h *
+                        (normalizedVectorPercentage.x * Math.abs(this.velocity.h / 2)) +
+                        normalizedVectorPercentage.y *
+                        Math.abs(this.velocity.v * hScale * 12),
+                    this.size.h / 2
+                    )
+                );
+            sketch.pop();
+        }
     };
 
     // https://www.grc.nasa.gov/www/k-12/VirtualAero/BottleRocket/airplane/termv.html
