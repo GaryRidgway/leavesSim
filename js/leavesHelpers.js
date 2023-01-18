@@ -178,3 +178,19 @@ function graphArrayTruncateAndIndex(performanceGraphData, modTime, rotation) {
         return {index:insertIndex, truncate:Math.max(truncateEndIndex - truncateStartIndex, 0)};
     }
 }
+
+// https://stackoverflow.com/questions/43566019/how-to-choose-a-weighted-random-array-element-in-javascript#answer-55671924
+function weighted_random(items, weights) {
+    var i;
+
+    for (i = 0; i < weights.length; i++)
+        weights[i] += weights[i - 1] || 0;
+    
+    var random = Math.random() * weights[weights.length - 1];
+    
+    for (i = 0; i < weights.length; i++)
+        if (weights[i] > random)
+            break;
+    
+    return items[i];
+}

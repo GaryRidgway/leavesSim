@@ -1,6 +1,6 @@
 body {
   margin: 0;
-  transform: transale3d(0,0,0);
+  transform: translate3d(0,0,0);
 }
 
 #leafCanvasContainer {
@@ -34,14 +34,47 @@ body {
 
 .leaf {
   position: absolute;
-  height: auto;
+  width: 1px;
+  height: 1px;
   filter: drop-shadow(0 0 0.75rem rgb(78, 25, 115));
 }
 
 .leaf img {
-  position: relative;
-  width: 100%;
+  /* display: none; */
+  position: absolute;
+  width: 100px;
   height: auto;
+  left: -50px;
+  top: -50px;
+}
+
+.transform-origin {
+  position: relative;
+  height: 40px;
+  width: 40px;
+  left: -20px;
+  top: -20px;
+  display: none;
+}
+
+.transform-origin:before, .transform-origin:after {
+  position:absolute;
+  content: '';
+  height: 100%;
+  width: 100%;
+  background-color: white;
+}
+
+.transform-origin:before {
+  height: 100%;
+  width: 2px;
+  left: calc(50% - 1px);
+}
+
+.transform-origin:after {
+  height: 2px;
+  width: 100%;
+  top: calc(50% - 1px);
 }
 
 .debugData {

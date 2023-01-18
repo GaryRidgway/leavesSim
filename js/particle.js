@@ -1,17 +1,21 @@
 function particle(sketch, debugline) {
+    
+    const leafData = weighted_random(leafAssets, leafAssetsWeights());
+    // const leafData = leafAssets[Math.floor(Math.random()*leafAssets.length)];
+    this.particleBaseSize = leafData.baseSize * particleBaseSize;
     this.id = makeId();
-    this.modifier = Math.random() * particleVariability - particleVariability/2;
+    this.modifier = debug.randomSize ? Math.random() * particleVariability - particleVariability/2 : 1;
     this.size = {
-        w: particleBaseSize + this.modifier,
-        h: particleBaseSize + this.modifier
+        w: this.particleBaseSize + this.modifier,
+        h: this.particleBaseSize + this.modifier
     };
-    this.sizeModified = (this.size.w / particleBaseSize) * leafBaseSize;
+    this.sizeModified = (this.size.w / this.particleBaseSize) * this.particleBaseSize;
 
     this.Cd = 0.04;
 
     // https://www.omnicalculator.com/physics/terminal-velocity?c=USD&v=Rho:1.204!kgm3,g:9.81!mps2,m:0.005!kg,A:0.58!m2,Cd:.04
     this.TVel = 1.874;//m/s
-    this.mass = 0.003 * (this.size.w/30);//kg
+    this.mass = 0.003 * (this.size.w/30) * leafData.massMult;//kg
     this.weight = this.mass * gravity;
     // this.CSA = 0.58; //m^2
     this.dragConsts = 0.02784;
@@ -23,13 +27,20 @@ function particle(sketch, debugline) {
     this.swayBreadth = Math.PI / 9;
     this.swayOffset = Math.random() * 100;
 
-    let rVelH = Math.random() * 2 * startingVelocityMultiplier - startingVelocityMultiplier;
-    let rVelV = Math.random() * 2 * startingVelocityMultiplier - startingVelocityMultiplier;
     this.velocity = {
-        h: rVelH,
-        v: rVelV,
-        total: rVelH + rVelV
+        h: 0,
+        v: 0,
+        total: 0
     };
+    if (!debug.stopForces) {
+        let rVelH = Math.random() * 2 * startingVelocityMultiplier - startingVelocityMultiplier;
+        let rVelV = Math.random() * 2 * startingVelocityMultiplier - startingVelocityMultiplier;
+        this.velocity = {
+            h: rVelH,
+            v: rVelV,
+            total: rVelH + rVelV
+        };
+    }
     this.acceleration = {
         h: 0,
         v: 0
@@ -44,16 +55,29 @@ function particle(sketch, debugline) {
 
     // Initialize html stuff
     // https://developer.mozilla.org/en-US/docs/Web/API/Document/createElement
-    const leafData = leafAssets[Math.floor(Math.random()*leafAssets.length)];
     const leaf = document.createElement("div");
     const leafIMG = document.createElement("img");
+    const leafIMGTransformOrigin = document.createElement("div");
+    leafIMGTransformOrigin.classList.add('transform-origin');
+
     leaf.id = this.id;
     leaf.classList = ['leaf'];
-    leaf.style.width = this.sizeModified + 'px';
-    leaf.style.height = this.sizeModified + 'px';
     leaf.appendChild(leafIMG);
+    leaf.appendChild(leafIMGTransformOrigin);
+    leaf.style.left = this.size.w/2 + 'px';
+    leaf.style.top = this.size.w/2 + 'px';
+
     leafIMG.src = leafData.path;
-    leafIMG.style.transform = 'translate(' + leafData.x + 'px, ' + leafData.y + 'px) rotate(' + leafData.r + 'rad)';
+    let scale = true ? 'scale(' + (this.size.w * leafData.imageSizeModifier / 100) + ')' : '';
+    let translate = true ? 'translate(' + (-leafData.x) + 'px, ' + (-leafData.y) + 'px)' : '';
+    let rotate = true ? 'rotate(' + leafData.r + 'rad)' : '';
+    leafIMG.style.left = (-50 - leafData.x) + 'px';
+    leafIMG.style.top = (-50 - leafData.y) + 'px';
+    leafIMG.style.transformOrigin = (50 + leafData.x) + 'px ' + (50 + leafData.y) + 'px';
+    leafIMG.style.transform = scale + ' ' + rotate;
+
+
+    leafIMGTransformOrigin.style.transform = 'translate(' + leafData.x + 'px, ' + leafData.y + 'px)';
     const canvasCompanion = document.getElementById('canvasCompanion');
     canvasCompanion.appendChild(leaf);
 
@@ -214,33 +238,33 @@ function particle(sketch, debugline) {
     // https://www.grc.nasa.gov/www/k-12/VirtualAero/BottleRocket/airplane/termv.html
     this.accelerating = function (velocity) {
     let F = rRound(this.weight - this.drag(velocity));
-    return F / this.mass > 0;
+        return F / this.mass > 0;
     };
 
     // https://www.grc.nasa.gov/www/k-12/rocket/drageq.html#:~:text=The%20drag%20equation%20states%20that,times%20the%20reference%20area%20A.
     this.drag = function (velocity) {
-    return this.dragConsts * (Math.pow(velocity, 2) / 2);
+        return this.dragConsts * (Math.pow(velocity, 2) / 2);
     };
 
     this.addForce = function (x, y) {
-    this.forces.x.push(x);
-    this.forces.y.push(y / hScale);
+        this.forces.x.push(x);
+        this.forces.y.push(y / hScale);
     };
 
     this.applyForces = function (dTime) {
-    let hForces = this.forces.x;
-    for (let i = 0; i < hForces.length; i++) {
-        this.velocity.h += dTime * hForces[i];
-    }
+        let hForces = this.forces.x;
+        for (let i = 0; i < hForces.length; i++) {
+            this.velocity.h += dTime * hForces[i];
+        }
 
-    let vForces = this.forces.y;
-    for (let i = 0; i < vForces.length; i++) {
-        this.velocity.v += dTime * vForces[i];
-    }
+        let vForces = this.forces.y;
+        for (let i = 0; i < vForces.length; i++) {
+            this.velocity.v += dTime * vForces[i];
+        }
 
-    this.forces = {
-        x: [],
-        y: []
-    };
+        this.forces = {
+            x: [],
+            y: []
+        };
     };
 }
