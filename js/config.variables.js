@@ -124,7 +124,7 @@ let numParticles = 100;
 
 let particleHardcap = numParticles * limitModifier;
 let autoAdjustParticleAmount = true;
-let targetFrames = 57;
+let targetFrames = 59;
 
 const maxParticlesSpawnRateMultiplier = 0.5;
 const falloffPower = 2;

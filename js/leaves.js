@@ -72,6 +72,15 @@ var s1 = function (sketch) {
             x: sketch.mouseX,
             y: sketch.mouseY
         };
+
+        // Try and remove the mouse if at the edge of screen.
+        // This will never be perfect in this implementation because of framerate.
+        if (
+            mouse.x < 5 || mouse.x > window.innerWidth - 8 ||
+            mouse.y < 5 || mouse.y > window.innerHeight - 8 
+        ) {
+            return;
+        }
         if (debug.mouseTracking) {
             sketch.push();
             sketch.noStroke();
@@ -238,13 +247,18 @@ var s1 = function (sketch) {
             }
             sketch.timeSinceLastSpawn = 0;
         }
+
+        // Iterate backwards for deletion.
         for (let i = sketch.particles.length - 1; i >= 0; i--) {
             if (sketch.particles[i].deletable()) {
                 sketch.particles.splice(i, 1);
-            } else {
+            }
+        }
+
+        // Iterate forwards for drawing and updating.
+        for (let i = 0; i < sketch.particles.length; i++) {
                 sketch.particles[i].update(sketch);
                 sketch.particles[i].draw(sketch);
-            }
         }
     };
 
@@ -286,16 +300,20 @@ var s1 = function (sketch) {
                     }
                     let rateMultiplier = maxParticlesSpawnRateMultiply(sketch.particles.length, sketch.numParticles);
                     let adjustmentCoefficient = sketch.fpsData.averageFPS / targetFrames;
-                    const modNumParticles = Math.min((
-                        Math.min(Math.max(sketch.numParticles * adjustmentCoefficient, 0), particleRisk * numParticles)
-                        + sketch.numParticles
-                    ) / 2, particleHardcap);
-                    sketch.numParticles = numParticles * (1-rateMultiplier) + modNumParticles * rateMultiplier;
                     const modSpawnRate = Math.max((
                         Math.max(Math.min(sketch.spawnRate / adjustmentCoefficient, 1), spawnRate / particleRisk) * 2
                         + sketch.spawnRate
                     ) / 3, spawnRateHardcap) / rateMultiplier;
                     sketch.spawnRate = spawnRate * (1-rateMultiplier) + modSpawnRate * rateMultiplier;
+
+                    const modNumParticles = Math.min((
+                        Math.min(Math.max(sketch.numParticles * adjustmentCoefficient, 0), particleRisk * numParticles)
+                        + sketch.numParticles
+                    ) / 2, particleHardcap);
+                    sketch.numParticles = Math.min(
+                        numParticles * (1-rateMultiplier) + modNumParticles * rateMultiplier,
+                        (sketch.lifetime/1000)*(1/sketch.spawnRate)*2
+                    );
                 }
 
                 sketch.fpsData.averageFPS = Math.floor(last60FrameSum / newNumLast60Frames);
@@ -312,13 +330,17 @@ var s1 = function (sketch) {
         }
     }
 
-    sketch.performaceGraphData = {
-        highestParticleCount: debug.performaceGraphData.baseParticleScaleMax,
-        period: debug.performaceGraphData.period,
-        hLowerBound: debug.performaceGraphData.horizontalMarkingLowerBound,
-        points: [],
-        currentRotation: 0
-    };
+    sketch.performaceGraphData = {};
+    
+    if(debug.debugPanel && debug.performanceGraph) {
+        sketch.performaceGraphData = {
+            highestParticleCount: debug.performaceGraphData.baseParticleScaleMax,
+            period: debug.performaceGraphData.period,
+            hLowerBound: debug.performaceGraphData.horizontalMarkingLowerBound,
+            points: [],
+            currentRotation: 0
+        };
+    }
     /* Arguments are to be structured as objects, as such
     * {
     *   modTime: 1234, // In seconds.
